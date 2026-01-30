@@ -33,7 +33,7 @@ class _MyWidgetState extends State<AppSelect> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Hizmet()),
+                  MaterialPageRoute(builder: (context) => const HizmetPage()),
                 );
               },
             ),

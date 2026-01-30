@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project46/Creds/forgot_password.dart';
+import 'package:project46/Pages/App_select.dart';
 import 'Creds/login_page.dart';
 import 'Creds/signup_page.dart';
 
@@ -22,7 +23,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home Page')),
+      appBar: AppBar(title: const Text('Ana Sayfa')),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -56,6 +57,16 @@ class HomePage extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => const ForgotPasswordPage(),
                   ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              child: const Text("Skip For Test"),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AppSelect()),
                 );
               },
             ),

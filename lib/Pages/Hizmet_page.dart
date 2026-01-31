@@ -5,7 +5,8 @@ import 'package:project46/Pages/Kategorik_temp.dart';
 import 'package:project46/Pages/aktif_talepler.dart';
 
 class HizmetPage extends StatelessWidget {
-  const HizmetPage({super.key});
+  final int userId;
+  const HizmetPage({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class HizmetPage extends StatelessWidget {
           children: [
             _buildHeader(context),
             const SizedBox(height: 16),
-            _buildCategories(context), // Passed context here
+            _buildCategories(context),
             const SizedBox(height: 24),
             _buildActiveRequests(context),
             const SizedBox(height: 24),
@@ -87,7 +88,7 @@ class HizmetPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ProfilePage(),
+                        builder: (_) => ProfilePage(userId: userId), // ✅ BURASI
                       ),
                     );
                   }),
@@ -119,7 +120,6 @@ class HizmetPage extends StatelessWidget {
   // CATEGORIES
   // ======================================================
   Widget _buildCategories(BuildContext context) {
-    // Helper function to handle repeated navigation logic
     void goToCategory(String name) {
       Navigator.push(
         context,
@@ -145,36 +145,12 @@ class HizmetPage extends StatelessWidget {
               mainAxisSpacing: 10,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                _CategoryItem(
-                  Icons.flash_on,
-                  'Elektrikçi',
-                  () => goToCategory('Elektrikçi'),
-                ),
-                _CategoryItem(
-                  Icons.water_drop,
-                  'Tesisatçı',
-                  () => goToCategory('Tesisatçı'),
-                ),
-                _CategoryItem(
-                  Icons.ac_unit,
-                  'Klima Tamiri',
-                  () => goToCategory('Klima Tamiri'),
-                ),
-                _CategoryItem(
-                  Icons.kitchen,
-                  'Beyaz Eşya',
-                  () => goToCategory('Beyaz Eşya'),
-                ),
-                _CategoryItem(
-                  Icons.handyman,
-                  'Marangoz',
-                  () => goToCategory('Marangoz'),
-                ),
-                _CategoryItem(
-                  Icons.format_paint,
-                  'Boyacı',
-                  () => goToCategory('Boyacı'),
-                ),
+                _CategoryItem(Icons.flash_on, 'Elektrikçi', () => goToCategory('Elektrikçi')),
+                _CategoryItem(Icons.water_drop, 'Tesisatçı', () => goToCategory('Tesisatçı')),
+                _CategoryItem(Icons.ac_unit, 'Klima Tamiri', () => goToCategory('Klima Tamiri')),
+                _CategoryItem(Icons.kitchen, 'Beyaz Eşya', () => goToCategory('Beyaz Eşya')),
+                _CategoryItem(Icons.handyman, 'Marangoz', () => goToCategory('Marangoz')),
+                _CategoryItem(Icons.format_paint, 'Boyacı', () => goToCategory('Boyacı')),
               ],
             ),
           ],
@@ -196,14 +172,12 @@ class HizmetPage extends StatelessWidget {
             children: [
               const _SectionHeader(title: 'Aktif Talepler'),
               TextButton(
-                onPressed: () => {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AktifTalepler(),
-                    ),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AktifTalepler(),
                   ),
-                },
+                ),
                 child: const Text(
                   'Tümünü Gör →',
                   style: TextStyle(color: Colors.blue),
@@ -254,15 +228,9 @@ class HizmetPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(20),

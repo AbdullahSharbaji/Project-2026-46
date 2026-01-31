@@ -13,14 +13,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: const HomePage());
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomePage(),
+    );
   }
 }
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  Widget _buildHeader(BuildContext context) {
+<<<<<<< HEAD
+  Widget Container _buildHeader(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 48, 16, 24),
@@ -31,6 +35,50 @@ class HomePage extends StatelessWidget {
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(24),
           bottomRight: Radius.circular(24),
+=======
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Hizmet Uygulaması')),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+              child: const Text('Giriş Yap'),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              child: const Text('Üye Ol'),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SignupPage()),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              child: const Text("Şifremi Unuttum"),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              child: const Text("Skip For Test (Direct App)"),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AppSelect(userId: 1), // ✅ test için
+                ),
+              ),
+            ),
+          ],
+>>>>>>> refs/remotes/origin/main
         ),
       ),
     );

@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-<<<<<<< HEAD
-  Widget Container _buildHeader(BuildContext context) {
+  // HEADER WIDGET
+  Widget _buildHeader(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 48, 16, 24),
@@ -35,51 +35,16 @@ class HomePage extends StatelessWidget {
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(24),
           bottomRight: Radius.circular(24),
-=======
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Hizmet Uygulaması')),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton(
-              child: const Text('Giriş Yap'),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              child: const Text('Üye Ol'),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SignupPage()),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              child: const Text("Şifremi Unuttum"),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              child: const Text("Skip For Test (Direct App)"),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AppSelect(userId: 1), // ✅ test için
-                ),
-              ),
-            ),
-          ],
->>>>>>> refs/remotes/origin/main
         ),
+      ),
+      child: const Text(
+        "Hizmet Uygulaması",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }
@@ -87,16 +52,13 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ana Sayfa')),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // HEADER AT THE TOP
           _buildHeader(context),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
-          // BUTTONS
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
@@ -128,7 +90,7 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 ElevatedButton(
-                  child: const Text("Şifre Unuttum"),
+                  child: const Text("Şifremi Unuttum"),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -146,7 +108,7 @@ class HomePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const AppSelect(),
+                        builder: (context) => const AppSelect(userId: 1),
                       ),
                     );
                   },

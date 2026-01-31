@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart'; // ApiService dosyanın doğru yolunu ekle
+import '../Pages/App_select.dart'; // Başarılı girişte gidilecek sayfa
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -8,8 +11,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController usernameController = TextEditingController();
+  // Backend "Email" beklediği için isimlendirmeyi emailController yapman daha iyi olur
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final ApiService _apiService = ApiService(); // Servis nesnemizi oluşturduk
 
   InputDecoration inputStyle(String label) {
     return InputDecoration(
@@ -27,10 +32,43 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // Giriş işlemini yöneten yeni fonksiyon
+  void _handleLogin() async {
+    final email = emailController.text;
+    final password = passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Lütfen tüm alanları doldurun')),
+      );
+      return;
+    }
+
+    // Backend'e istek atıyoruz
+    final user = await _apiService.login(email, password);
+
+    if (user != null && user["id"] != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => AppSelect(userId: user["id"]), // ❗ const YOK
+        ),
+      );
+    }
+    else {
+      // Hata durumunda uyarı ver
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('E-posta veya şifre hatalı!')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Giriş Yap')),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -38,35 +76,24 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                controller: usernameController,
-                decoration: inputStyle('Username'),
+                controller: emailController,
+                decoration: inputStyle('E-posta Adresi'), // Backend Email bekliyor
+                keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 12),
-
               TextField(
                 controller: passwordController,
                 obscureText: true,
-                decoration: inputStyle('Password'),
+                decoration: inputStyle('Şifre'),
               ),
               const SizedBox(height: 20),
-
               ElevatedButton(
-                onPressed: () {
-                  final username = usernameController.text;
-                  final password = passwordController.text;
-
-                  if (username.isEmpty || password.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please fill all fields')),
-                    );
-                    return;
-                  }
-
-                  // TODO: login logic
-                  print('Username: $username');
-                  print('Password: $password');
-                },
-                child: const Text('Login'),
+                onPressed: _handleLogin, // Fonksiyonu buraya bağladık
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(200, 50),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Giriş Yap'),
               ),
             ],
           ),

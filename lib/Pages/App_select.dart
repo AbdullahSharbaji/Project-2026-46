@@ -3,7 +3,8 @@ import 'package:project46/Pages/CagirGelsin_Page.dart';
 import 'package:project46/Pages/Hizmet_page.dart';
 
 class AppSelect extends StatefulWidget {
-  const AppSelect({super.key});
+  final int userId;
+  const AppSelect({super.key, required this.userId});
 
   @override
   State<AppSelect> createState() => _MyWidgetState();
@@ -33,7 +34,9 @@ class _MyWidgetState extends State<AppSelect> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HizmetPage()),
+                  MaterialPageRoute(
+                    builder: (context) => HizmetPage(userId: widget.userId), // ✅
+                  ),
                 );
               },
             ),

@@ -13,7 +13,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: const HomePage());
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomePage(),
+    );
   }
 }
 
@@ -23,52 +26,43 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ana Sayfa')),
+      appBar: AppBar(title: const Text('Hizmet Uygulaması')),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ElevatedButton(
               child: const Text('Giriş Yap'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              ),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               child: const Text('Üye Ol'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignupPage()),
-                );
-              },
-            ),
-
-            const SizedBox(height: 16),
-            ElevatedButton(
-              child: const Text("Şifre Unuttum"),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ForgotPasswordPage(),
-                  ),
-                );
-              },
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SignupPage()),
+              ),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              child: const Text("Skip For Test"),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AppSelect()),
-                );
-              },
+              child: const Text("Şifremi Unuttum"),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              child: const Text("Skip For Test (Direct App)"),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AppSelect(userId: 1), // ✅ test için
+                ),
+              ),
             ),
           ],
         ),

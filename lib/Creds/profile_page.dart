@@ -1,79 +1,97 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final int userId;
+  const ProfilePage({super.key, required this.userId});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final ApiService _apiService = ApiService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Profile'), centerTitle: true),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Profile picture
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.blue.shade100,
-              child: const Icon(Icons.person, size: 60, color: Colors.blue),
+      body: FutureBuilder<Map<String, dynamic>?>(
+        future: _apiService.getUserById(widget.userId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(child: Text("Profil bilgisi yüklenemedi"));
+          }
+
+          final user = snapshot.data!;
+          final fullName = (user["fullName"] ?? "").toString();
+          final email = (user["email"] ?? "").toString();
+          final phone = (user["phoneNumber"] ?? "—").toString();
+
+          final birthDate = user["birthDate"] != null
+              ? DateTime.tryParse(user["birthDate"].toString())
+              : null;
+
+          final birthDateText = birthDate != null
+              ? "${birthDate.day}/${birthDate.month}/${birthDate.year}"
+              : "—";
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.blue.shade100,
+                  child: const Icon(Icons.person, size: 60, color: Colors.blue),
+                ),
+                const SizedBox(height: 16),
+
+                Text(
+                  fullName,
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+
+                Text(email, style: const TextStyle(color: Colors.grey)),
+                const SizedBox(height: 24),
+
+                _infoTile(Icons.phone, 'Phone', phone),
+                _infoTile(Icons.cake, 'Birthdate', birthDateText),
+
+                const SizedBox(height: 24),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      // TODO: Edit profile
+                    },
+                    icon: const Icon(Icons.edit),
+                    label: const Text('Edit Profile'),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.logout),
+                    label: const Text('Logout'),
+                  ),
+                ),
+              ],
             ),
-
-            const SizedBox(height: 16),
-
-            // Name
-            const Text(
-              'John Doe',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 4),
-
-            // Email
-            const Text(
-              'johndoe@email.com',
-              style: TextStyle(color: Colors.grey),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Info card
-            _infoTile(Icons.phone, 'Phone', '+90 555 123 45 67'),
-            _infoTile(Icons.cake, 'Birthdate', '12 / 05 / 1998'),
-            _infoTile(Icons.location_on, 'Location', 'Türkiye'),
-
-            const SizedBox(height: 24),
-
-            // Buttons
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // TODO: Edit profile
-                },
-                icon: const Icon(Icons.edit),
-                label: const Text('Edit Profile'),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  // TODO: Logout
-                },
-                icon: const Icon(Icons.logout),
-                label: const Text('Logout'),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

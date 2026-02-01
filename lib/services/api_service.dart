@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart';
 
 class ApiService {
-  static String get baseUrl {
-    return kIsWeb ? "https://localhost:7289/api" : "https://10.0.2.2:7289/api";
-  }
+  static const String baseUrl =
+      "https://brouilla-felicity-needingly.ngrok-free.dev/api";
+
+  Map<String, String> get _headers => {
+    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true", // ✅ KRİTİK
+  };
 
   // 🔹 Login
   Future<dynamic> login(String email, String password) async {
@@ -14,11 +17,8 @@ class ApiService {
     try {
       final response = await http.post(
         url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "Email": email,
-          "Password": password,
-        }),
+        headers: _headers,
+        body: jsonEncode({"Email": email, "Password": password}),
       );
 
       if (response.statusCode == 200) {
@@ -48,7 +48,7 @@ class ApiService {
     try {
       final response = await http.post(
         url,
-        headers: {"Content-Type": "application/json"},
+        headers: _headers,
         body: jsonEncode({
           "FirstName": firstName,
           "LastName": lastName,
@@ -59,11 +59,6 @@ class ApiService {
         }),
       );
 
-      if (response.statusCode != 200) {
-        print("Register Hatası: ${response.statusCode}");
-        print(response.body);
-      }
-
       return response.statusCode == 200;
     } catch (e) {
       print("Bağlantı Hatası (Register): $e");
@@ -71,18 +66,17 @@ class ApiService {
     }
   }
 
-  // 🔹 Profil bilgisi getir (GET /api/users/{id})
+  // 🔹 Profil
   Future<Map<String, dynamic>?> getUserById(int userId) async {
     final url = Uri.parse('$baseUrl/users/$userId');
 
     try {
-      final response = await http.get(url);
+      final response = await http.get(url, headers: _headers);
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body) as Map<String, dynamic>;
+        return jsonDecode(response.body);
       } else {
         print("Profil Hatası: ${response.statusCode}");
-        print(response.body);
         return null;
       }
     } catch (e) {

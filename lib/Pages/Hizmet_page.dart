@@ -3,11 +3,8 @@ import 'package:project46/Creds/profile_page.dart';
 import 'package:project46/Pages/Bildirimler.dart';
 import 'package:project46/Pages/Kategorik_temp.dart';
 import 'package:project46/Pages/aktif_talepler.dart';
-<<<<<<< HEAD
 import 'package:project46/Pages/AllCategoriesPage.dart';
-=======
 import 'package:project46/services/api_service.dart';
->>>>>>> ba38d49357f640475cd3aa04e861d7a947eb3839
 
 class HizmetPage extends StatelessWidget {
   final int userId;

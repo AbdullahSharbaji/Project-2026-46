@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:project46/Pages/ProviderProfilePage.dart';
-=======
 import '../services/api_service.dart';
->>>>>>> 10a107fd6f2e02be8affded6c854583a0b6f96c1
 
 class KategorikTemp extends StatefulWidget {
   final int categoryId;
@@ -31,125 +28,51 @@ class _KategorikTempState extends State<KategorikTemp> {
         backgroundColor: const Color(0xFF1E3C72),
         foregroundColor: Colors.white,
       ),
-<<<<<<< HEAD
       body: Container(
         color: const Color(0xFFF5F7FA),
-        child: ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: _dummyProviders.length,
-          itemBuilder: (context, index) {
-            return _buildProviderCard(context, _dummyProviders[index]);
-          },
-        ),
-=======
-      body: FutureBuilder<List<dynamic>>(
-        future: api.getProvidersByCategory(widget.categoryId),
-        builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        child: FutureBuilder<List<dynamic>>(
+          future: api.getProvidersByCategory(widget.categoryId),
+          builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          final items = snap.data ?? [];
+            final items = snap.data ?? [];
 
-          if (items.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  "${widget.categoryName} kategorisinde henüz usta yok.",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: items.length,
-            itemBuilder: (context, i) {
-              final p = items[i];
-              final name = (p["fullName"] ?? "-").toString();
-              final city = (p["city"] ?? "-").toString();
-              final phone = (p["phone"] ?? "").toString();
-              final rating = (p["rating"] ?? 0).toString();
-              final priceNote = (p["priceNote"] ?? "").toString();
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 22,
-                      child: Text(
-                        name.isNotEmpty ? name[0].toUpperCase() : "U",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "$city • ⭐ $rating",
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                          if (priceNote.isNotEmpty) ...[
-                            const SizedBox(height: 4),
-                            Text(
-                              priceNote,
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                          if (phone.isNotEmpty) ...[
-                            const SizedBox(height: 6),
-                            Text(
-                              phone,
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios, size: 18),
-                      onPressed: () {
-                        // İstersen buradan provider detail sayfasına gidebiliriz
-                      },
-                    ),
-                  ],
+            if (items.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    "${widget.categoryName} kategorisinde henüz usta yok.",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16),
+                  ),
                 ),
               );
-            },
-          );
-        },
->>>>>>> 10a107fd6f2e02be8affded6c854583a0b6f96c1
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: items.length,
+              itemBuilder: (context, i) {
+                return _buildProviderCardFromData(context, items[i]);
+              },
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildProviderCard(BuildContext context, _ServiceProvider provider) {
+  Widget _buildProviderCardFromData(BuildContext context, dynamic p) {
+    final name = (p["fullName"] ?? "-").toString();
+    final city = (p["city"] ?? "-").toString();
+    final phone = (p["phone"] ?? "").toString();
+    final rating = double.tryParse((p["rating"] ?? 0).toString()) ?? 0.0;
+    final priceNote = (p["priceNote"] ?? "").toString();
+    final imageUrl = (p["imageUrl"] ?? "https://via.placeholder.com/150").toString();
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -158,7 +81,7 @@ class _KategorikTempState extends State<KategorikTemp> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -174,8 +97,12 @@ class _KategorikTempState extends State<KategorikTemp> {
             decoration: BoxDecoration(
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(12),
+              image: DecorationImage(
+                image: NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+              ),
             ),
-            child: const Icon(Icons.person, size: 40, color: Colors.grey),
+            child: imageUrl.isEmpty ? const Icon(Icons.person, size: 40, color: Colors.grey) : null,
           ),
           const SizedBox(width: 16),
           // Info & Action
@@ -186,18 +113,21 @@ class _KategorikTempState extends State<KategorikTemp> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      provider.name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF2D3142),
+                    Expanded(
+                      child: Text(
+                        name,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2D3142),
+                        ),
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
+                        color: Colors.orange.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -205,7 +135,7 @@ class _KategorikTempState extends State<KategorikTemp> {
                           const Icon(Icons.star, size: 16, color: Colors.orange),
                           const SizedBox(width: 4),
                           Text(
-                            provider.rating.toString(),
+                            rating.toString(),
                             style: const TextStyle(
                               color: Colors.orange,
                               fontWeight: FontWeight.bold,
@@ -219,9 +149,16 @@ class _KategorikTempState extends State<KategorikTemp> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  widget.categoryName, // Profession matches category
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                  "$city • $phone",
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                 ),
+                if (priceNote.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    priceNote,
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                  ),
+                ],
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
@@ -231,16 +168,16 @@ class _KategorikTempState extends State<KategorikTemp> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProviderProfilePage(
-                            name: provider.name,
-                            imageUrl: provider.imageUrl,
-                            rating: provider.rating,
+                            name: name,
+                            imageUrl: imageUrl,
+                            rating: rating,
                             profession: widget.categoryName,
                           ),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E3C72), // Matches theme color
+                      backgroundColor: const Color(0xFF1E3C72),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -259,45 +196,3 @@ class _KategorikTempState extends State<KategorikTemp> {
     );
   }
 }
-
-// Dummy Data Model
-class _ServiceProvider {
-  final String name;
-  final String imageUrl;
-  final double rating;
-
-  _ServiceProvider({
-    required this.name,
-    required this.imageUrl,
-    required this.rating,
-  });
-}
-
-// Dummy Data List
-List<_ServiceProvider> _dummyProviders = [
-  _ServiceProvider(
-    name: "Ahmet Yılmaz",
-    imageUrl: "https://i.pravatar.cc/150?img=11",
-    rating: 4.8,
-  ),
-  _ServiceProvider(
-    name: "Ayşe Kaya",
-    imageUrl: "https://i.pravatar.cc/150?img=5",
-    rating: 4.9,
-  ),
-  _ServiceProvider(
-    name: "Mehmet Demir",
-    imageUrl: "https://i.pravatar.cc/150?img=13",
-    rating: 4.5,
-  ),
-  _ServiceProvider(
-    name: "Fatma Çelik",
-    imageUrl: "https://i.pravatar.cc/150?img=9",
-    rating: 4.7,
-  ),
-  _ServiceProvider(
-    name: "Ali Vural",
-    imageUrl: "https://i.pravatar.cc/150?img=3",
-    rating: 4.6,
-  ),
-];

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project46/Creds/forgot_password.dart';
+
 import 'package:project46/Pages/Hizmet_page.dart';
 import 'package:project46/Pages/splash_screen.dart'; // Import Splash Screen
 import 'Creds/login_page.dart';
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage>
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

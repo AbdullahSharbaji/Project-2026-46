@@ -3,10 +3,6 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   static const String baseUrl = "http://37.140.242.178/api";
-<<<<<<< HEAD
-=======
-
->>>>>>> ba38d49357f640475cd3aa04e861d7a947eb3839
 
   Map<String, String> get _headers =>
       {

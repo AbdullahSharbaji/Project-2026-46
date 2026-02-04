@@ -8,21 +8,21 @@ class AllCategoriesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Extended list of categories
     final List<Map<String, dynamic>> categories = [
-      {'icon': Icons.flash_on, 'name': 'Elektrikçi'},
-      {'icon': Icons.water_drop, 'name': 'Tesisatçı'},
-      {'icon': Icons.ac_unit, 'name': 'Klima Tamiri'},
-      {'icon': Icons.kitchen, 'name': 'Beyaz Eşya'},
-      {'icon': Icons.handyman, 'name': 'Marangoz'},
-      {'icon': Icons.format_paint, 'name': 'Boyacı'},
-      {'icon': Icons.cleaning_services, 'name': 'Temizlik'},
-      {'icon': Icons.local_shipping, 'name': 'Nakliyat'},
-      {'icon': Icons.pest_control, 'name': 'İlaçlama'},
-      {'icon': Icons.lock, 'name': 'Çilingir'},
-      {'icon': Icons.computer, 'name': 'Bilgisayar'},
-      {'icon': Icons.tv, 'name': 'Televizyon'},
-      {'icon': Icons.yard, 'name': 'Bahçıvan'},
-      {'icon': Icons.pool, 'name': 'Havuz Bakımı'},
-      {'icon': Icons.roofing, 'name': 'Çatı Tamiri'},
+      {'id': 1, 'icon': Icons.flash_on, 'name': 'Elektrikçi'},
+      {'id': 2, 'icon': Icons.water_drop, 'name': 'Tesisatçı'},
+      {'id': 3, 'icon': Icons.ac_unit, 'name': 'Klima Tamiri'},
+      {'id': 4, 'icon': Icons.kitchen, 'name': 'Beyaz Eşya'},
+      {'id': 5, 'icon': Icons.handyman, 'name': 'Marangoz'},
+      {'id': 6, 'icon': Icons.format_paint, 'name': 'Boyacı'},
+      {'id': 7, 'icon': Icons.cleaning_services, 'name': 'Temizlik'},
+      {'id': 8, 'icon': Icons.local_shipping, 'name': 'Nakliyat'},
+      {'id': 9, 'icon': Icons.pest_control, 'name': 'İlaçlama'},
+      {'id': 10, 'icon': Icons.lock, 'name': 'Çilingir'},
+      {'id': 11, 'icon': Icons.computer, 'name': 'Bilgisayar'},
+      {'id': 12, 'icon': Icons.tv, 'name': 'Televizyon'},
+      {'id': 13, 'icon': Icons.yard, 'name': 'Bahçıvan'},
+      {'id': 14, 'icon': Icons.pool, 'name': 'Havuz Bakımı'},
+      {'id': 15, 'icon': Icons.roofing, 'name': 'Çatı Tamiri'},
     ];
 
     return Scaffold(
@@ -51,7 +51,10 @@ class AllCategoriesPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => KategorikTemp(categoryName: cat['name']),
+                    builder: (context) => KategorikTemp(
+                      categoryId: cat['id'],
+                      categoryName: cat['name'],
+                    ),
                   ),
                 );
               },
@@ -82,7 +85,7 @@ class _CategoryItem extends StatelessWidget {
           border: Border.all(color: Colors.grey.shade200),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),

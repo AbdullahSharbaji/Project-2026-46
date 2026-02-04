@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'package:project46/Creds/edit_profile.dart';
 
 class ProfilePage extends StatefulWidget {
   final int userId;
@@ -69,7 +70,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // TODO: Edit profile
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                      );
                     },
                     icon: const Icon(Icons.edit),
                     label: const Text('Edit Profile'),

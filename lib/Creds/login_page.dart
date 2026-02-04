@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import '../Pages/App_select.dart';
+import '../Pages/Hizmet_page.dart';
 import 'forgot_password.dart';
 import 'signup_page.dart';
 
@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => AppSelect(userId: user["id"]),
+            builder: (_) => HizmetPage(userId: user["id"]),
           ),
         );
       } else {

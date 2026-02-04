@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project46/Creds/forgot_password.dart';
-import 'package:project46/Pages/App_select.dart';
+import 'package:project46/Pages/Hizmet_page.dart';
 import 'package:project46/Pages/splash_screen.dart'; // Import Splash Screen
 import 'Creds/login_page.dart';
 import 'Creds/signup_page.dart';
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Hizmet Uygulaması',
+      title: 'UstaYolda!',
       theme: ThemeData(
         primaryColor: const Color(0xFF1E3C72),
         colorScheme: ColorScheme.fromSeed(
@@ -29,7 +29,10 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.grey.shade50,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
@@ -72,7 +75,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
@@ -86,29 +90,27 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -0.5),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, -0.5), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+          ),
+        );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.2, 0.7, curve: Curves.elasticOut),
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.2, 0.7, curve: Curves.elasticOut),
+      ),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.5, 1.0, curve: Curves.easeIn),
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.5, 1.0, curve: Curves.easeIn),
+      ),
+    );
 
     _controller.forward();
   }
@@ -140,7 +142,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               SlideTransition(
                 position: _slideAnimation,
                 child: const Text(
-                  "Hizmet Uygulaması",
+                  "UstaYolda!",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 32,
@@ -199,10 +201,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       const Text(
                         "İşlemlerinize devam etmek için giriş yapın veya kayıt olun.",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                       const SizedBox(height: 32),
 
@@ -232,7 +231,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          side: const BorderSide(color: Color(0xFF1E3C72), width: 2),
+                          side: const BorderSide(
+                            color: Color(0xFF1E3C72),
+                            width: 2,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -240,21 +242,21 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         child: const Text(
                           'ÜYE OL',
                           style: TextStyle(
-                             fontSize: 16,
-                             fontWeight: FontWeight.bold,
-                             color: Color(0xFF1E3C72),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1E3C72),
                           ),
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Skip for Test (Smaller/Less prominent)
                       TextButton(
                         onPressed: () {
-                           Navigator.push(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const AppSelect(userId: 1),
+                              builder: (context) => const HizmetPage(userId: 1),
                             ),
                           );
                         },

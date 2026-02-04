@@ -3,6 +3,7 @@ import 'package:project46/Creds/profile_page.dart';
 import 'package:project46/Pages/Bildirimler.dart';
 import 'package:project46/Pages/Kategorik_temp.dart';
 import 'package:project46/Pages/aktif_talepler.dart';
+import 'package:project46/Pages/AllCategoriesPage.dart';
 
 class HizmetPage extends StatelessWidget {
   final int userId;
@@ -152,6 +153,24 @@ class HizmetPage extends StatelessWidget {
                 _CategoryItem(Icons.handyman, 'Marangoz', () => goToCategory('Marangoz')),
                 _CategoryItem(Icons.format_paint, 'Boyacı', () => goToCategory('Boyacı')),
               ],
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AllCategoriesPage(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "Hepsini Göster",
+                  style: TextStyle(color: Color(0xFF1E3C72), fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ],
         ),

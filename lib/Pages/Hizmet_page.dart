@@ -4,6 +4,7 @@ import 'package:project46/Pages/Bildirimler.dart';
 import 'package:project46/Pages/Kategorik_temp.dart';
 import 'package:project46/Pages/aktif_talepler.dart';
 import 'package:project46/Pages/AllCategoriesPage.dart';
+import 'package:project46/Pages/create_request_page.dart';
 import 'package:project46/services/api_service.dart';
 
 class HizmetPage extends StatelessWidget {
@@ -24,6 +25,22 @@ class HizmetPage extends StatelessWidget {
             _buildActiveRequests(context),
             const SizedBox(height: 24),
           ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateRequestPage(userId: userId),
+            ),
+          );
+        },
+        backgroundColor: const Color(0xFF1E3C72),
+        icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+        label: const Text(
+          'Talep Oluştur',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -335,7 +352,7 @@ class HizmetPage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.15),
+                    color: statusColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -372,7 +389,7 @@ class HizmetPage extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
+          color: Colors.black.withValues(alpha: 0.05),
           blurRadius: 10,
           offset: const Offset(0, 4),
         ),

@@ -129,7 +129,7 @@ class ApiService {
     }
   }
 
-// 🔹 Providers by Category (GET /api/providers?categoryId=1)
+  // 🔹 Providers by Category (GET /api/providers?categoryId=1)
   Future<List<dynamic>> getProvidersByCategory(int categoryId) async {
     final url = Uri.parse('$baseUrl/providers?categoryId=$categoryId');
 
@@ -146,6 +146,47 @@ class ApiService {
     } catch (e) {
       print("Bağlantı Hatası (Providers): $e");
       return [];
+    }
+  }
+
+  // 🔹 Create Request (POST /api/requests)
+  Future<bool> createRequest({
+    required int userId,
+    required int categoryId,
+    required String description,
+    String? imagePath,
+  }) async {
+    final url = Uri.parse('$baseUrl/requests');
+
+    try {
+      if (imagePath != null && imagePath.isNotEmpty) {
+        // Multipart request for image upload
+        var request = http.MultipartRequest('POST', url);
+        request.headers.addAll(_headers);
+        request.fields['UserId'] = userId.toString();
+        request.fields['CategoryId'] = categoryId.toString();
+        request.fields['Description'] = description;
+
+        request.files.add(await http.MultipartFile.fromPath('Image', imagePath));
+
+        var response = await request.send();
+        return response.statusCode == 200 || response.statusCode == 201;
+      } else {
+        // Standard JSON request if no image
+        final response = await http.post(
+          url,
+          headers: _headers,
+          body: jsonEncode({
+            "UserId": userId,
+            "CategoryId": categoryId,
+            "Description": description,
+          }),
+        );
+        return response.statusCode == 200 || response.statusCode == 201;
+      }
+    } catch (e) {
+      print("Bağlantı Hatası (CreateRequest): $e");
+      return false;
     }
   }
 }

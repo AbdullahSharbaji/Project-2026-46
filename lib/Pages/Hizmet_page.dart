@@ -122,14 +122,38 @@ class HizmetPage extends StatelessWidget {
   }
 
   // ======================================================
-  // CATEGORIES
+  // CATEGORIES (DB'DEN)
   // ======================================================
   Widget _buildCategories(BuildContext context) {
-    void goToCategory(String name) {
+    final api = ApiService();
+
+    IconData iconFromKey(String key) {
+      switch (key) {
+        case "flash_on":
+          return Icons.flash_on;
+        case "water_drop":
+          return Icons.water_drop;
+        case "ac_unit":
+          return Icons.ac_unit;
+        case "kitchen":
+          return Icons.kitchen;
+        case "handyman":
+          return Icons.handyman;
+        case "format_paint":
+          return Icons.format_paint;
+        default:
+          return Icons.category;
+      }
+    }
+
+    void goToCategory(int id, String name) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => KategorikTemp(categoryName: name),
+          builder: (_) => KategorikTemp(
+            categoryId: id,
+            categoryName: name,
+          ),
         ),
       );
     }
@@ -144,19 +168,47 @@ class HizmetPage extends StatelessWidget {
           children: [
             _sectionTitle('Kategoriler'),
             const SizedBox(height: 16),
-            GridView.count(
-              crossAxisCount: 3,
-              shrinkWrap: true,
-              mainAxisSpacing: 10,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _CategoryItem(Icons.flash_on, 'Elektrikçi', () => goToCategory('Elektrikçi')),
-                _CategoryItem(Icons.water_drop, 'Tesisatçı', () => goToCategory('Tesisatçı')),
-                _CategoryItem(Icons.ac_unit, 'Klima Tamiri', () => goToCategory('Klima Tamiri')),
-                _CategoryItem(Icons.kitchen, 'Beyaz Eşya', () => goToCategory('Beyaz Eşya')),
-                _CategoryItem(Icons.handyman, 'Marangoz', () => goToCategory('Marangoz')),
-                _CategoryItem(Icons.format_paint, 'Boyacı', () => goToCategory('Boyacı')),
-              ],
+
+            FutureBuilder<List<dynamic>>(
+              future: api.getCategories(),
+              builder: (context, snap) {
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                final items = snap.data ?? [];
+
+                if (items.isEmpty) {
+                  return Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: _cardDecoration(),
+                    child: const Text("Kategori bulunamadı."),
+                  );
+                }
+
+                return GridView.count(
+                  crossAxisCount: 3,
+                  shrinkWrap: true,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: items.map((c) {
+                    final id = c["id"] ?? 0;
+                    final name = (c["name"] ?? "-").toString();
+                    final iconKey = (c["iconKey"] ?? "category").toString();
+
+                    return _CategoryItem(
+                      iconFromKey(iconKey),
+                      name,
+                          () => goToCategory(id, name),
+                    );
+                  }).toList(),
+                );
+              },
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -200,7 +252,7 @@ class HizmetPage extends StatelessWidget {
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AktifTalepler(userId: userId), // ✅ userId gönder
+                    builder: (context) => AktifTalepler(userId: userId),
                   ),
                 ),
                 child: const Text(
@@ -233,7 +285,6 @@ class HizmetPage extends StatelessWidget {
                 );
               }
 
-              // Ana sayfada 2 tane göster
               final showList = items.take(2).toList();
 
               return Column(

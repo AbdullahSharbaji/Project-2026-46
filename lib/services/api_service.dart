@@ -8,10 +8,11 @@ class ApiService {
 
 >>>>>>> ba38d49357f640475cd3aa04e861d7a947eb3839
 
-  Map<String, String> get _headers => {
-    "Content-Type": "application/json",
-    "ngrok-skip-browser-warning": "true", // ✅ KRİTİK
-  };
+  Map<String, String> get _headers =>
+      {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true", // ✅ KRİTİK
+      };
 
   // 🔹 Login
   Future<dynamic> login(String email, String password) async {
@@ -111,7 +112,8 @@ class ApiService {
       return [];
     }
   }
-  // ✅ KATEGORİLER (GET /api/categories)  <-- YENİ
+
+  // 🔹 Categories (GET /api/categories)
   Future<List<dynamic>> getCategories() async {
     final url = Uri.parse('$baseUrl/categories');
 
@@ -119,8 +121,7 @@ class ApiService {
       final response = await http.get(url, headers: _headers);
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return (data as List);
+        return (jsonDecode(response.body) as List);
       } else {
         print("Categories Hatası: ${response.statusCode}");
         print(response.body);
@@ -128,6 +129,26 @@ class ApiService {
       }
     } catch (e) {
       print("Bağlantı Hatası (Categories): $e");
+      return [];
+    }
+  }
+
+// 🔹 Providers by Category (GET /api/providers?categoryId=1)
+  Future<List<dynamic>> getProvidersByCategory(int categoryId) async {
+    final url = Uri.parse('$baseUrl/providers?categoryId=$categoryId');
+
+    try {
+      final response = await http.get(url, headers: _headers);
+
+      if (response.statusCode == 200) {
+        return (jsonDecode(response.body) as List);
+      } else {
+        print("Providers Hatası: ${response.statusCode}");
+        print(response.body);
+        return [];
+      }
+    } catch (e) {
+      print("Bağlantı Hatası (Providers): $e");
       return [];
     }
   }

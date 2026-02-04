@@ -15,7 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   // Constants for styling
   static const double _headerHeight = 250.0;
   static const double _borderRadius = 30.0;
-  
+
   // Controllers
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -170,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Password Input
                   TextFormField(
                     controller: passwordController,
@@ -181,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   // Forgot Password Link
                   Align(
                     alignment: Alignment.centerRight,
@@ -201,15 +201,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  
+
                   // Login Button
                   ElevatedButton(
                     onPressed: _handleLogin,
                     child: const Text('GİRİŞ YAP'),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Sign Up Redirect
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -220,7 +220,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                           Navigator.push(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const SignupPage()),
                           );

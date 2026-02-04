@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 class KategorikTemp extends StatefulWidget {
-  // 1. Add the variable here
   final String categoryName;
 
-  // 2. Add it to the constructor
   const KategorikTemp({super.key, required this.categoryName});
 
   @override
@@ -16,7 +14,6 @@ class _KategorikTempState extends State<KategorikTemp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // 3. Access it using 'widget.categoryName'
         title: Text(widget.categoryName),
         centerTitle: true,
       ),

@@ -240,18 +240,18 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         child: const Text(
                           'ÜYE OL',
                           style: TextStyle(
-                             fontSize: 16,
-                             fontWeight: FontWeight.bold,
-                             color: Color(0xFF1E3C72),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1E3C72),
                           ),
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Skip for Test (Smaller/Less prominent)
                       TextButton(
                         onPressed: () {
-                           Navigator.push(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const AppSelect(userId: 1),

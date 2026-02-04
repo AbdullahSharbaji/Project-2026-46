@@ -3,6 +3,7 @@ import 'package:project46/Creds/profile_page.dart';
 import 'package:project46/Pages/Bildirimler.dart';
 import 'package:project46/Pages/Kategorik_temp.dart';
 import 'package:project46/Pages/aktif_talepler.dart';
+import 'package:project46/services/api_service.dart';
 
 class HizmetPage extends StatelessWidget {
   final int userId;
@@ -88,7 +89,7 @@ class HizmetPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => ProfilePage(userId: userId), // ✅ BURASI
+                        builder: (_) => ProfilePage(userId: userId),
                       ),
                     );
                   }),
@@ -160,9 +161,11 @@ class HizmetPage extends StatelessWidget {
   }
 
   // ======================================================
-  // ACTIVE REQUESTS
+  // ACTIVE REQUESTS (DB'DEN)
   // ======================================================
   Widget _buildActiveRequests(BuildContext context) {
+    final api = ApiService();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -175,7 +178,7 @@ class HizmetPage extends StatelessWidget {
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AktifTalepler(),
+                    builder: (context) => AktifTalepler(userId: userId), // ✅ userId gönder
                   ),
                 ),
                 child: const Text(
@@ -185,23 +188,53 @@ class HizmetPage extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
-          _requestCard(
-            title: 'Elektrikçi',
-            description: 'Salon aydınlatması...',
-            status: 'Beklemede',
-            statusColor: Colors.orange,
-            time: '2 saat önce',
-            onTap: () => print("Elektrik talebi detayı"),
-          ),
-          const SizedBox(height: 12),
-          _requestCard(
-            title: 'Tesisatçı',
-            description: 'Mutfak musluğundan su...',
-            status: '3 Teklif',
-            statusColor: Colors.deepOrange,
-            time: '1 gün önce',
-            onTap: () => print("Tesisat talebi detayı"),
+          const SizedBox(height: 8),
+
+          FutureBuilder<List<dynamic>>(
+            future: api.getActiveRequests(userId),
+            builder: (context, snap) {
+              if (snap.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              final items = snap.data ?? [];
+
+              if (items.isEmpty) {
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: _cardDecoration(),
+                  child: const Text("Aktif talep yok."),
+                );
+              }
+
+              // Ana sayfada 2 tane göster
+              final showList = items.take(2).toList();
+
+              return Column(
+                children: showList.map((r) {
+                  final title = (r["category"] ?? "-").toString();
+                  final desc = (r["description"] ?? "Açıklama yok").toString();
+                  final status = (r["status"] ?? "-").toString();
+                  final offers = (r["offerCount"] ?? 0).toString();
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _requestCard(
+                      title: title,
+                      description: desc,
+                      status: "$status • $offers teklif",
+                      statusColor: Colors.orange,
+                      time: "",
+                      onTap: () {},
+                    ),
+                  );
+                }).toList(),
+              );
+            },
           ),
         ],
       ),
@@ -244,14 +277,16 @@ class HizmetPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(description, style: const TextStyle(color: Colors.grey)),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.access_time, size: 14, color: Colors.grey),
-                const SizedBox(width: 4),
-                Text(time, style: const TextStyle(color: Colors.grey)),
-              ],
-            ),
+            if (time.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  Text(time, style: const TextStyle(color: Colors.grey)),
+                ],
+              ),
+            ]
           ],
         ),
       ),

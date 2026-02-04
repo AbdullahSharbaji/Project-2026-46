@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl =
-      "https://brouilla-felicity-needingly.ngrok-free.dev/api";
+  static const String baseUrl = "http://37.140.242.178/api";
+
 
   Map<String, String> get _headers => {
     "Content-Type": "application/json",
@@ -18,7 +18,10 @@ class ApiService {
       final response = await http.post(
         url,
         headers: _headers,
-        body: jsonEncode({"Email": email, "Password": password}),
+        body: jsonEncode({
+          "Email": email,
+          "Password": password,
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -84,4 +87,46 @@ class ApiService {
       return null;
     }
   }
+
+  // 🔹 Aktif talepler (GET /api/requests/active?userId=5)
+  Future<List<dynamic>> getActiveRequests(int userId) async {
+    final url = Uri.parse('$baseUrl/requests/active?userId=$userId');
+
+    try {
+      final response = await http.get(url, headers: _headers);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return (data as List);
+      } else {
+        print("ActiveRequests Hatası: ${response.statusCode}");
+        print(response.body);
+        return [];
+      }
+    } catch (e) {
+      print("Bağlantı Hatası (ActiveRequests): $e");
+      return [];
+    }
+  }
+  // ✅ KATEGORİLER (GET /api/categories)  <-- YENİ
+  Future<List<dynamic>> getCategories() async {
+    final url = Uri.parse('$baseUrl/categories');
+
+    try {
+      final response = await http.get(url, headers: _headers);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return (data as List);
+      } else {
+        print("Categories Hatası: ${response.statusCode}");
+        print(response.body);
+        return [];
+      }
+    } catch (e) {
+      print("Bağlantı Hatası (Categories): $e");
+      return [];
+    }
+  }
 }
+

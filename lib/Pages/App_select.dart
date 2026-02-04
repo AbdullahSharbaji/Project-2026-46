@@ -78,7 +78,7 @@ class _AppSelectState extends State<AppSelect> {
           // BOTTOM HALF: SERVICE BUTTONS
           // ==============================
           Expanded(
-            flex: 4, 
+            flex: 4,
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: const BoxDecoration(
@@ -142,12 +142,12 @@ class _AppSelectState extends State<AppSelect> {
   }
 
   Widget _buildServiceButton(
-    BuildContext context, {
-    required String title,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
+      BuildContext context, {
+        required String title,
+        required IconData icon,
+        required Color color,
+        required VoidCallback onTap,
+      }) {
     return SizedBox(
       width: double.infinity,
       height: 60,

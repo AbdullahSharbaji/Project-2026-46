@@ -57,9 +57,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             children: [
               // Flutter Logo as placeholder
               const FlutterLogo(size: 100),
-              
+
               const SizedBox(height: 24),
-              
+
               const Text(
                 "Hizmet Uygulaması",
                 style: TextStyle(

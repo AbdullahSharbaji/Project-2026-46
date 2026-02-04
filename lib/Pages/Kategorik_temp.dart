@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:project46/Pages/ProviderProfilePage.dart';
 
 class KategorikTemp extends StatefulWidget {
-  // 1. Add the variable here
   final String categoryName;
 
-  // 2. Add it to the constructor
   const KategorikTemp({super.key, required this.categoryName});
 
   @override

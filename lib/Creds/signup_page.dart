@@ -174,7 +174,7 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 // Heading & Image Placeholder
-                 Positioned(
+                Positioned(
                   top: 60,
                   left: 0,
                   right: 0,
@@ -223,7 +223,7 @@ class _SignupPageState extends State<SignupPage> {
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                   Row(
+                  Row(
                     children: [
                       Expanded(
                         child: TextFormField(
@@ -247,11 +247,11 @@ class _SignupPageState extends State<SignupPage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                                    
+
                   TextFormField(
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
-                     decoration: const InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Telefon Numarası',
                       prefixIcon: Icon(Icons.phone_android),
                     ),
@@ -279,7 +279,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   TextFormField(
                     controller: passwordController,
                     obscureText: true,
@@ -307,9 +307,9 @@ class _SignupPageState extends State<SignupPage> {
                       child: const Text('ÜYE OL'),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                   Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
@@ -318,7 +318,7 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                           Navigator.pushReplacement(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) => const LoginPage()),
                           );

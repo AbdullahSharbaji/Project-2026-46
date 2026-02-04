@@ -156,36 +156,74 @@ class ApiService {
     required String description,
     String? imagePath,
   }) async {
-    final url = Uri.parse('$baseUrl/requests');
-
     try {
-      if (imagePath != null && imagePath.isNotEmpty) {
-        // Multipart request for image upload
-        var request = http.MultipartRequest('POST', url);
-        request.headers.addAll(_headers);
-        request.fields['UserId'] = userId.toString();
-        request.fields['CategoryId'] = categoryId.toString();
-        request.fields['Description'] = description;
+      // ✅ baseUrl zaten .../api olduğu için burası /requests
+      final uri = Uri.parse('$baseUrl/requests${imagePath != null ? "/with-image" : ""}');
 
-        request.files.add(await http.MultipartFile.fromPath('Image', imagePath));
-
-        var response = await request.send();
-        return response.statusCode == 200 || response.statusCode == 201;
-      } else {
-        // Standard JSON request if no image
-        final response = await http.post(
-          url,
-          headers: _headers,
+      if (imagePath == null) {
+        // ✅ WEB (JSON)
+        final res = await http.post(
+          uri,
+          headers: _headers, // sende zaten var
           body: jsonEncode({
             "UserId": userId,
             "CategoryId": categoryId,
             "Description": description,
           }),
         );
-        return response.statusCode == 200 || response.statusCode == 201;
+
+        if (res.statusCode == 200) return true;
+
+        print("CreateRequest JSON Hatası: ${res.statusCode}");
+        print(res.body);
+        return false;
+      } else {
+        // ✅ ANDROID/IOS (Multipart)
+        final req = http.MultipartRequest("POST", uri);
+
+        req.fields["UserId"] = userId.toString();
+        req.fields["CategoryId"] = categoryId.toString();
+        req.fields["Description"] = description;
+
+        req.files.add(await http.MultipartFile.fromPath("Image", imagePath));
+
+        final streamed = await req.send();
+        if (streamed.statusCode == 200) return true;
+
+        print("CreateRequest Multipart Hatası: ${streamed.statusCode}");
+        return false;
       }
     } catch (e) {
-      print("Bağlantı Hatası (CreateRequest): $e");
+      print("CreateRequest error: $e");
+      return false;
+    }
+  }
+  Future<bool> updateProfile({
+    required int userId,
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+  }) async {
+    final url = Uri.parse('$baseUrl/users/$userId');
+
+    try {
+      final res = await http.put(
+        url,
+        headers: _headers,
+        body: jsonEncode({
+          "FirstName": firstName,
+          "LastName": lastName,
+          "PhoneNumber": phoneNumber.isEmpty ? null : phoneNumber,
+        }),
+      );
+
+      if (res.statusCode == 200) return true;
+
+      print("UpdateProfile Hatası: ${res.statusCode}");
+      print(res.body);
+      return false;
+    } catch (e) {
+      print("Bağlantı Hatası (UpdateProfile): $e");
       return false;
     }
   }

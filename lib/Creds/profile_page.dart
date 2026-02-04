@@ -13,12 +13,27 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final ApiService _apiService = ApiService();
 
+  // 🔥 editten dönünce refresh için
+  late Future<Map<String, dynamic>?> _profileFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _profileFuture = _apiService.getUserById(widget.userId);
+  }
+
+  void _refreshProfile() {
+    setState(() {
+      _profileFuture = _apiService.getUserById(widget.userId);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Profile'), centerTitle: true),
       body: FutureBuilder<Map<String, dynamic>?>(
-        future: _apiService.getUserById(widget.userId),
+        future: _profileFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -29,6 +44,8 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           final user = snapshot.data!;
+          final firstName = (user["firstName"] ?? "").toString();
+          final lastName = (user["lastName"] ?? "").toString();
           final fullName = (user["fullName"] ?? "").toString();
           final email = (user["email"] ?? "").toString();
           final phone = (user["phoneNumber"] ?? "—").toString();
@@ -69,11 +86,24 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      // 🔥 Edit sayfasına dolu gönderiyoruz
+                      final updated = await Navigator.push<bool>(
                         context,
-                        MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                        MaterialPageRoute(
+                          builder: (_) => EditProfilePage(
+                            userId: widget.userId,
+                            firstName: firstName,
+                            lastName: lastName,
+                            phone: phone == "—" ? "" : phone,
+                          ),
+                        ),
                       );
+
+                      // 🔥 geri dönüşte yenile
+                      if (updated == true) {
+                        _refreshProfile();
+                      }
                     },
                     icon: const Icon(Icons.edit),
                     label: const Text('Edit Profile'),

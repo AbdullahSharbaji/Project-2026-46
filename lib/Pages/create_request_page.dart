@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project46/services/api_service.dart';
 import 'package:project46/Pages/aktif_talepler.dart';
+import 'package:flutter/foundation.dart';
 
 class CreateRequestPage extends StatefulWidget {
   final int userId;
@@ -67,7 +68,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
       userId: widget.userId,
       categoryId: _selectedCategoryId!,
       description: _descriptionController.text.trim(),
-      imagePath: _image?.path,
+      imagePath: kIsWeb ? null : _image?.path, // ✅ KRİTİK SATIR
     );
 
     setState(() => _submitting = false);

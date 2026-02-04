@@ -1,16 +1,31 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:project46/services/api_service.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+  final int userId;
+
+  // ✅ ProfilePage'den dolu gelecek alanlar
+  final String firstName;
+  final String lastName;
+  final String phone;
+
+  const EditProfilePage({
+    super.key,
+    required this.userId,
+    required this.firstName,
+    required this.lastName,
+    required this.phone,
+  });
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  final ApiService _apiService = ApiService();
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -18,9 +33,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
 
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // ✅ Edit ekranı dolu açılır
+    _nameController.text = widget.firstName;
+    _surnameController.text = widget.lastName;
+    _phoneController.text = widget.phone;
+  }
+
   Future<void> _pickImage() async {
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
@@ -28,27 +54,54 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  void _saveProfile() {
-    // Validate inputs if necessary
-    if (_nameController.text.isEmpty || _surnameController.text.isEmpty) {
+  Future<void> _saveProfile() async {
+    if (_nameController.text.trim().isEmpty || _surnameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Lütfen ad ve soyad alanlarını doldurun.')),
       );
       return;
     }
 
-    // Identify successful save
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Profil başarıyla güncellendi!'),
-        backgroundColor: Colors.green,
-      ),
+    setState(() => _saving = true);
+
+    final ok = await _apiService.updateProfile(
+      userId: widget.userId,
+      firstName: _nameController.text.trim(),
+      lastName: _surnameController.text.trim(),
+      phoneNumber: _phoneController.text.trim(),
     );
 
-    // Navigate back after delay
-    Future.delayed(const Duration(seconds: 1), () {
-      Navigator.pop(context);
-    });
+    setState(() => _saving = false);
+
+    if (!mounted) return;
+
+    if (ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profil başarıyla güncellendi!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      Future.delayed(const Duration(milliseconds: 600), () {
+        Navigator.pop(context, true); // ✅ ProfilePage refresh tetikler
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profil güncellenemedi (API hatası)'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _surnameController.dispose();
+    _phoneController.dispose();
+    super.dispose();
   }
 
   @override
@@ -72,14 +125,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
               const SizedBox(height: 16),
               _buildTextField("Soyad", _surnameController, Icons.person_outline),
               const SizedBox(height: 16),
-              _buildTextField("Telefon Numarası", _phoneController, Icons.phone,
-                  keyboardType: TextInputType.phone),
+              _buildTextField(
+                "Telefon Numarası",
+                _phoneController,
+                Icons.phone,
+                keyboardType: TextInputType.phone,
+              ),
               const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _saveProfile,
+                  onPressed: _saving ? null : _saveProfile,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1E3C72),
                     shape: RoundedRectangleBorder(
@@ -87,7 +144,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     elevation: 4,
                   ),
-                  child: const Text(
+                  child: _saving
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
                     "Kaydet",
                     style: TextStyle(
                       color: Colors.white,
@@ -125,12 +184,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             child: ClipOval(
               child: _image != null
-                  ? Image.file(
-                      _image!,
-                      width: 120,
-                      height: 120,
-                      fit: BoxFit.cover,
-                    )
+                  ? Image.file(_image!, width: 120, height: 120, fit: BoxFit.cover)
                   : const Icon(Icons.person, size: 60, color: Colors.grey),
             ),
           ),
@@ -145,11 +199,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   color: Color(0xFF1E3C72),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.camera_alt,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
               ),
             ),
           ),
@@ -159,8 +209,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget _buildTextField(
-      String label, TextEditingController controller, IconData icon,
-      {TextInputType keyboardType = TextInputType.text}) {
+      String label,
+      TextEditingController controller,
+      IconData icon, {
+        TextInputType keyboardType = TextInputType.text,
+      }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,

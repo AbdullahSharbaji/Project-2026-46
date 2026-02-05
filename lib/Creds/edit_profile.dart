@@ -38,8 +38,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-
-    // ✅ Edit ekranı dolu açılır
     _nameController.text = widget.firstName;
     _surnameController.text = widget.lastName;
     _phoneController.text = widget.phone;
@@ -48,14 +46,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<void> _pickImage() async {
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+      setState(() => _image = File(pickedFile.path));
     }
   }
 
   Future<void> _saveProfile() async {
-    if (_nameController.text.trim().isEmpty || _surnameController.text.trim().isEmpty) {
+    if (_saving) return;
+
+    final first = _nameController.text.trim();
+    final last = _surnameController.text.trim();
+    final phone = _phoneController.text.trim();
+
+    if (first.isEmpty || last.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Lütfen ad ve soyad alanlarını doldurun.')),
       );
@@ -64,18 +66,49 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     setState(() => _saving = true);
 
-    final ok = await _apiService.updateProfile(
-      userId: widget.userId,
-      firstName: _nameController.text.trim(),
-      lastName: _surnameController.text.trim(),
-      phoneNumber: _phoneController.text.trim(),
-    );
+    try {
+      // 1) Profil bilgilerini güncelle
+      final ok = await _apiService.updateProfile(
+        userId: widget.userId,
+        firstName: first,
+        lastName: last,
+        phoneNumber: phone,
+      );
 
-    setState(() => _saving = false);
+      if (!ok) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Profil güncellenemedi (API hatası)'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
 
-    if (!mounted) return;
+      // 2) Foto varsa upload et (opsiyonel)
+      if (_image != null) {
+        final url = await _apiService.uploadProfilePhoto(
+          userId: widget.userId,
+          imagePath: _image!.path,
+        );
 
-    if (ok) {
+        if (url == null) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fotoğraf yüklenemedi'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          // İstersen burada return yapıp sayfada kalabilir.
+          // Şimdilik: sayfada kalalım ki kullanıcı tekrar denesin.
+          return;
+        }
+      }
+
+      // 3) Başarılı
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Profil başarıyla güncellendi!'),
@@ -83,16 +116,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       );
 
-      Future.delayed(const Duration(milliseconds: 600), () {
-        Navigator.pop(context, true); // ✅ ProfilePage refresh tetikler
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Profil güncellenemedi (API hatası)'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+      Navigator.pop(context, true); // ✅ ProfilePage refresh tetikler
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
   }
 
@@ -192,7 +220,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             bottom: 0,
             right: 0,
             child: InkWell(
-              onTap: _pickImage,
+              onTap: _saving ? null : _pickImage,
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: const BoxDecoration(

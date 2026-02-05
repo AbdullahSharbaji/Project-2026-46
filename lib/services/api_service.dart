@@ -4,11 +4,10 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseUrl = "http://37.140.242.178/api";
 
-  Map<String, String> get _headers =>
-      {
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true", // ✅ KRİTİK
-      };
+  Map<String, String> get _headers => {
+    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
+  };
 
   // 🔹 Login
   Future<dynamic> login(String email, String password) async {
@@ -26,11 +25,11 @@ class ApiService {
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
-      } else {
-        print("Giriş Hatası: ${response.statusCode}");
-        print(response.body);
-        return null;
       }
+
+      print("Giriş Hatası: ${response.statusCode}");
+      print(response.body);
+      return null;
     } catch (e) {
       print("Bağlantı Hatası (Login): $e");
       return null;
@@ -62,7 +61,11 @@ class ApiService {
         }),
       );
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) return true;
+
+      print("Register Hatası: ${response.statusCode}");
+      print(response.body);
+      return false;
     } catch (e) {
       print("Bağlantı Hatası (Register): $e");
       return false;
@@ -78,17 +81,18 @@ class ApiService {
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
-      } else {
-        print("Profil Hatası: ${response.statusCode}");
-        return null;
       }
+
+      print("Profil Hatası: ${response.statusCode}");
+      print(response.body);
+      return null;
     } catch (e) {
       print("Bağlantı Hatası (Profile): $e");
       return null;
     }
   }
 
-  // 🔹 Aktif talepler (GET /api/requests/active?userId=5)
+  // 🔹 Aktif talepler
   Future<List<dynamic>> getActiveRequests(int userId) async {
     final url = Uri.parse('$baseUrl/requests/active?userId=$userId');
 
@@ -98,18 +102,18 @@ class ApiService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return (data as List);
-      } else {
-        print("ActiveRequests Hatası: ${response.statusCode}");
-        print(response.body);
-        return [];
       }
+
+      print("ActiveRequests Hatası: ${response.statusCode}");
+      print(response.body);
+      return [];
     } catch (e) {
       print("Bağlantı Hatası (ActiveRequests): $e");
       return [];
     }
   }
 
-  // 🔹 Categories (GET /api/categories)
+  // 🔹 Categories
   Future<List<dynamic>> getCategories() async {
     final url = Uri.parse('$baseUrl/categories');
 
@@ -118,18 +122,18 @@ class ApiService {
 
       if (response.statusCode == 200) {
         return (jsonDecode(response.body) as List);
-      } else {
-        print("Categories Hatası: ${response.statusCode}");
-        print(response.body);
-        return [];
       }
+
+      print("Categories Hatası: ${response.statusCode}");
+      print(response.body);
+      return [];
     } catch (e) {
       print("Bağlantı Hatası (Categories): $e");
       return [];
     }
   }
 
-  // 🔹 Providers by Category (GET /api/providers?categoryId=1)
+  // 🔹 Providers by Category
   Future<List<dynamic>> getProvidersByCategory(int categoryId) async {
     final url = Uri.parse('$baseUrl/providers?categoryId=$categoryId');
 
@@ -138,18 +142,18 @@ class ApiService {
 
       if (response.statusCode == 200) {
         return (jsonDecode(response.body) as List);
-      } else {
-        print("Providers Hatası: ${response.statusCode}");
-        print(response.body);
-        return [];
       }
+
+      print("Providers Hatası: ${response.statusCode}");
+      print(response.body);
+      return [];
     } catch (e) {
       print("Bağlantı Hatası (Providers): $e");
       return [];
     }
   }
 
-  // 🔹 Create Request (POST /api/requests)
+  // 🔹 Create Request
   Future<bool> createRequest({
     required int userId,
     required int categoryId,
@@ -157,14 +161,15 @@ class ApiService {
     String? imagePath,
   }) async {
     try {
-      // ✅ baseUrl zaten .../api olduğu için burası /requests
-      final uri = Uri.parse('$baseUrl/requests${imagePath != null ? "/with-image" : ""}');
+      final uri = Uri.parse(
+        '$baseUrl/requests${imagePath != null ? "/with-image" : ""}',
+      );
 
+      // ✅ JSON (web veya foto yok)
       if (imagePath == null) {
-        // ✅ WEB (JSON)
         final res = await http.post(
           uri,
-          headers: _headers, // sende zaten var
+          headers: _headers,
           body: jsonEncode({
             "UserId": userId,
             "CategoryId": categoryId,
@@ -177,27 +182,34 @@ class ApiService {
         print("CreateRequest JSON Hatası: ${res.statusCode}");
         print(res.body);
         return false;
-      } else {
-        // ✅ ANDROID/IOS (Multipart)
-        final req = http.MultipartRequest("POST", uri);
-
-        req.fields["UserId"] = userId.toString();
-        req.fields["CategoryId"] = categoryId.toString();
-        req.fields["Description"] = description;
-
-        req.files.add(await http.MultipartFile.fromPath("Image", imagePath));
-
-        final streamed = await req.send();
-        if (streamed.statusCode == 200) return true;
-
-        print("CreateRequest Multipart Hatası: ${streamed.statusCode}");
-        return false;
       }
+
+      // ✅ Multipart (android/ios foto var)
+      final req = http.MultipartRequest("POST", uri);
+      req.headers["Accept"] = "application/json";
+
+      req.fields["UserId"] = userId.toString();
+      req.fields["CategoryId"] = categoryId.toString();
+      req.fields["Description"] = description;
+
+      // backend: IFormFile? image  => alan adı "image" olmalı
+      req.files.add(await http.MultipartFile.fromPath("image", imagePath));
+
+      final streamed = await req.send();
+      final res = await http.Response.fromStream(streamed);
+
+      if (res.statusCode == 200) return true;
+
+      print("CreateRequest Multipart Hatası: ${res.statusCode}");
+      print(res.body);
+      return false;
     } catch (e) {
       print("CreateRequest error: $e");
       return false;
     }
   }
+
+  // 🔹 Update Profile (JSON)
   Future<bool> updateProfile({
     required int userId,
     required String firstName,
@@ -227,5 +239,38 @@ class ApiService {
       return false;
     }
   }
-}
 
+  // ✅ Upload Profile Photo (Multipart)
+  Future<String?> uploadProfilePhoto({
+    required int userId,
+    required String imagePath,
+  }) async {
+    try {
+      final uri = Uri.parse('$baseUrl/users/$userId/profile-photo');
+
+      final req = http.MultipartRequest('POST', uri);
+
+      // ❌ Content-Type application/json ASLA ekleme
+      req.headers["Accept"] = "application/json";
+      req.headers["ngrok-skip-browser-warning"] = "true";
+
+      // backend: [FromForm] IFormFile image  => alan adı "image"
+      req.files.add(await http.MultipartFile.fromPath('image', imagePath));
+
+      final streamed = await req.send();
+      final res = await http.Response.fromStream(streamed);
+
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        return data['profileImageUrl']?.toString();
+      }
+
+      print('UploadPhoto Hatası: ${res.statusCode}');
+      print(res.body);
+      return null;
+    } catch (e) {
+      print('UploadPhoto error: $e');
+      return null;
+    }
+  }
+}

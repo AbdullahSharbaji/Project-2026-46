@@ -13,7 +13,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final ApiService _apiService = ApiService();
 
-  // 🔥 editten dönünce refresh için
   late Future<Map<String, dynamic>?> _profileFuture;
 
   @override
@@ -58,6 +57,14 @@ class _ProfilePageState extends State<ProfilePage> {
               ? "${birthDate.day}/${birthDate.month}/${birthDate.year}"
               : "—";
 
+          // ✅ Backend artık ProfileImageUrl dönüyor (UsersController GET)
+          final profileImageUrl = (user["profileImageUrl"] ?? "").toString();
+          final hasPhoto = profileImageUrl.isNotEmpty;
+
+          // ✅ Sunucudaki uploads için tam URL
+          // Not: profileImageUrl "/uploads/xxx.jpg" şeklinde geliyor
+          final fullPhotoUrl = "http://37.140.242.178$profileImageUrl";
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -65,7 +72,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.blue.shade100,
-                  child: const Icon(Icons.person, size: 60, color: Colors.blue),
+                  backgroundImage: hasPhoto ? NetworkImage(fullPhotoUrl) : null,
+                  child: !hasPhoto
+                      ? const Icon(Icons.person, size: 60, color: Colors.blue)
+                      : null,
                 ),
                 const SizedBox(height: 16),
 
@@ -87,7 +97,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      // 🔥 Edit sayfasına dolu gönderiyoruz
                       final updated = await Navigator.push<bool>(
                         context,
                         MaterialPageRoute(
@@ -100,7 +109,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       );
 
-                      // 🔥 geri dönüşte yenile
                       if (updated == true) {
                         _refreshProfile();
                       }
@@ -115,9 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.logout),
                     label: const Text('Logout'),
                   ),

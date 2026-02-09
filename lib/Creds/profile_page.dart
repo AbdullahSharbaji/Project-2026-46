@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import 'package:project46/Creds/edit_profile.dart';
+import 'package:project46/Creds/login_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final int userId;
@@ -30,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile'), centerTitle: true),
+      appBar: AppBar(title: const Text('Profil'), centerTitle: true),
       body: FutureBuilder<Map<String, dynamic>?>(
         future: _profileFuture,
         builder: (context, snapshot) {
@@ -81,15 +82,23 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 Text(
                   fullName,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 4),
 
                 Text(email, style: const TextStyle(color: Colors.grey)),
                 const SizedBox(height: 24),
 
-                _infoTile(Icons.phone, 'Phone', phone),
-                _infoTile(Icons.cake, 'Birthdate', birthDateText),
+                _infoTile(Icons.phone, 'Telefon Numarası', phone),
+                _infoTile(Icons.cake, 'Doğum Tarihi', birthDateText),
+                _infoTile(
+                  Icons.location_on,
+                  'Adres',
+                  "Kemalpaşa Mah. 7048. Sk. No:15, Bornova, İzmir",
+                ),
 
                 const SizedBox(height: 24),
 
@@ -114,7 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       }
                     },
                     icon: const Icon(Icons.edit),
-                    label: const Text('Edit Profile'),
+                    label: const Text('Profil Düzenle'),
                   ),
                 ),
 
@@ -123,9 +132,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                        (route) => false,
+                      );
+                    },
                     icon: const Icon(Icons.logout),
-                    label: const Text('Logout'),
+                    label: const Text('Çıkış yap'),
                   ),
                 ),
               ],

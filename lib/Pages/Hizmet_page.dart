@@ -67,28 +67,20 @@ class HizmetPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
+                  Text(
+                    'Merhaba 👋',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Merhaba 👋',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Hangi hizmete ihtiyacınız var?',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ],
+                  Text(
+                    'Hangi hizmete ihtiyacınız var?',
+                    style: TextStyle(color: Colors.white70),
                   ),
                 ],
               ),
@@ -101,7 +93,7 @@ class HizmetPage extends StatelessWidget {
                         builder: (context) => const Bildirimler(),
                       ),
                     );
-                  }),
+                  }, hasNotification: true), // Added marker flag
                   const SizedBox(width: 12),
                   _iconButton(Icons.person, () {
                     Navigator.push(
@@ -120,7 +112,7 @@ class HizmetPage extends StatelessWidget {
     );
   }
 
-  Widget _iconButton(IconData icon, VoidCallback onTap) {
+  Widget _iconButton(IconData icon, VoidCallback onTap, {bool hasNotification = false}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -130,7 +122,28 @@ class HizmetPage extends StatelessWidget {
           color: Colors.white24,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, color: Colors.white),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Icon(icon, color: Colors.white),
+            if (hasNotification)
+              Positioned(
+                right: -2,
+                top: -2,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 8,
+                    minHeight: 8,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

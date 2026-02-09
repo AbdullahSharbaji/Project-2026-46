@@ -24,6 +24,13 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
   bool _loadingCategories = true;
   bool _submitting = false;
 
+  final List<String> _preSavedAddresses = [
+    "Ev: Kemalpaşa Mah. 7048. Sk. No:15, İzmir",
+    "İş: Adalet Mah. Anadolu Cad. No:41, İzmir",
+    "Diğer: Mevlana Mah. 1742. Sk. No:5, İzmir",
+  ];
+  String? _selectedAddress;
+
   @override
   void initState() {
     super.initState();
@@ -164,6 +171,37 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
                       ),
                     ),
                   ),
+            const SizedBox(height: 24),
+
+            // Pre-saved Address Selection
+            const Text(
+              'Adres Seçin',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _selectedAddress,
+                  hint: const Text('Kayıtlı Adresleriniz'),
+                  isExpanded: true,
+                  items: _preSavedAddresses.map((address) {
+                    return DropdownMenuItem<String>(
+                      value: address,
+                      child: Text(address, overflow: TextOverflow.ellipsis),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    setState(() => _selectedAddress = val);
+                  },
+                ),
+              ),
+            ),
             const SizedBox(height: 24),
 
             // Description Section

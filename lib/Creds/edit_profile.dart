@@ -10,6 +10,8 @@ class EditProfilePage extends StatefulWidget {
   final String firstName;
   final String lastName;
   final String phone;
+  final String? address;
+  final String? profileImageUrl;
 
   const EditProfilePage({
     super.key,
@@ -17,6 +19,8 @@ class EditProfilePage extends StatefulWidget {
     required this.firstName,
     required this.lastName,
     required this.phone,
+    this.address,
+    this.profileImageUrl,
   });
 
   @override
@@ -29,6 +33,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
 
   File? _image;
   final ImagePicker _picker = ImagePicker();
@@ -41,6 +46,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _nameController.text = widget.firstName;
     _surnameController.text = widget.lastName;
     _phoneController.text = widget.phone;
+    _addressController.text = widget.address ?? "";
   }
 
   Future<void> _pickImage() async {
@@ -56,6 +62,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final first = _nameController.text.trim();
     final last = _surnameController.text.trim();
     final phone = _phoneController.text.trim();
+    final address = _addressController.text.trim();
 
     if (first.isEmpty || last.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -73,6 +80,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         firstName: first,
         lastName: last,
         phoneNumber: phone,
+        address: address,
       );
 
       if (!ok) {
@@ -129,6 +137,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _nameController.dispose();
     _surnameController.dispose();
     _phoneController.dispose();
+    _addressController.dispose();
     super.dispose();
   }
 
@@ -158,6 +167,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 _phoneController,
                 Icons.phone,
                 keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                "Adres",
+                _addressController,
+                Icons.location_on,
+                maxLines: 3,
               ),
               const SizedBox(height: 40),
               SizedBox(
@@ -213,6 +229,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: ClipOval(
               child: _image != null
                   ? Image.file(_image!, width: 120, height: 120, fit: BoxFit.cover)
+                  : (widget.profileImageUrl != null && widget.profileImageUrl!.isNotEmpty)
+                  ? Image.network(
+                "http://37.140.242.178${widget.profileImageUrl}",
+                width: 120,
+                height: 120,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.person, size: 60, color: Colors.grey),
+              )
                   : const Icon(Icons.person, size: 60, color: Colors.grey),
             ),
           ),
@@ -241,6 +266,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       TextEditingController controller,
       IconData icon, {
         TextInputType keyboardType = TextInputType.text,
+        int maxLines = 1,
       }) {
     return Container(
       decoration: BoxDecoration(
@@ -257,6 +283,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
+        maxLines: maxLines,
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon, color: Colors.grey),

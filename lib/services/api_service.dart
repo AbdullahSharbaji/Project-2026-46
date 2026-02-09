@@ -184,6 +184,7 @@ class ApiService {
     required String firstName,
     required String lastName,
     required String phoneNumber,
+    String? address,
   }) async {
     final url = Uri.parse('$baseUrl/users/$userId');
     try {
@@ -194,6 +195,7 @@ class ApiService {
           "FirstName": firstName,
           "LastName": lastName,
           "PhoneNumber": phoneNumber.isEmpty ? null : phoneNumber,
+          "Address": address,
         }),
       );
 

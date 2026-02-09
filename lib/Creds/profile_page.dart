@@ -49,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
           final fullName = (user["fullName"] ?? "").toString();
           final email = (user["email"] ?? "").toString();
           final phone = (user["phoneNumber"] ?? "—").toString();
+          final address = (user["address"] ?? "").toString();
 
           final birthDate = user["birthDate"] != null
               ? DateTime.tryParse(user["birthDate"].toString())
@@ -97,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 _infoTile(
                   Icons.location_on,
                   'Adres',
-                  "Kemalpaşa Mah. 7048. Sk. No:15, Bornova, İzmir",
+                  address.isEmpty ? "Adres belirtilmemiş" : address,
                 ),
 
                 const SizedBox(height: 24),
@@ -114,6 +115,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             firstName: firstName,
                             lastName: lastName,
                             phone: phone == "—" ? "" : phone,
+                            address: address,
+                            profileImageUrl: profileImageUrl,
                           ),
                         ),
                       );

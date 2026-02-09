@@ -75,7 +75,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
       userId: widget.userId,
       categoryId: _selectedCategoryId!,
       description: _descriptionController.text.trim(),
-      imagePath: kIsWeb ? null : _image?.path, // ✅ KRİTİK SATIR
+      image: _image, // ✅ direkt XFile gönder
     );
 
     setState(() => _submitting = false);
@@ -121,20 +121,20 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
                   borderRadius: BorderRadius.circular(16),
                   image: _image != null
                       ? DecorationImage(
-                          image: FileImage(File(_image!.path)),
-                          fit: BoxFit.cover,
-                        )
+                    image: FileImage(File(_image!.path)),
+                    fit: BoxFit.cover,
+                  )
                       : null,
                 ),
                 child: _image == null
                     ? const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.add_a_photo, size: 48, color: Colors.grey),
-                          SizedBox(height: 8),
-                          Text('Fotoğraf Ekle', style: TextStyle(color: Colors.grey)),
-                        ],
-                      )
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_a_photo, size: 48, color: Colors.grey),
+                    SizedBox(height: 8),
+                    Text('Fotoğraf Ekle', style: TextStyle(color: Colors.grey)),
+                  ],
+                )
                     : null,
               ),
             ),
@@ -149,28 +149,28 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
             _loadingCategories
                 ? const Center(child: CircularProgressIndicator())
                 : Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<int>(
-                        value: _selectedCategoryId,
-                        hint: const Text('Kategori Seçiniz'),
-                        isExpanded: true,
-                        items: _categories.map((cat) {
-                          return DropdownMenuItem<int>(
-                            value: cat['id'],
-                            child: Text(cat['name'] ?? ''),
-                          );
-                        }).toList(),
-                        onChanged: (val) {
-                          setState(() => _selectedCategoryId = val);
-                        },
-                      ),
-                    ),
-                  ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<int>(
+                  value: _selectedCategoryId,
+                  hint: const Text('Kategori Seçiniz'),
+                  isExpanded: true,
+                  items: _categories.map((cat) {
+                    return DropdownMenuItem<int>(
+                      value: cat['id'],
+                      child: Text(cat['name'] ?? ''),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    setState(() => _selectedCategoryId = val);
+                  },
+                ),
+              ),
+            ),
             const SizedBox(height: 24),
 
             // Pre-saved Address Selection
@@ -235,9 +235,9 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
               child: _submitting
                   ? const CircularProgressIndicator(color: Colors.white)
                   : const Text(
-                      'TALEBİ GÖNDER',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
+                'TALEBİ GÖNDER',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
             ),
           ],
         ),

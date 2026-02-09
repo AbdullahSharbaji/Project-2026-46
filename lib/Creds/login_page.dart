@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        "Hoş Geldiniz",
+                        "Müşteri Girişi",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 28,

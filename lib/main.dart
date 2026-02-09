@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:project46/Pages/Hizmet_page.dart';
 import 'package:project46/Pages/splash_screen.dart'; // Import Splash Screen
 import 'Creds/login_page.dart';
-import 'Creds/signup_page.dart';
+import 'Pages/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -215,7 +215,7 @@ class _HomePageState extends State<HomePage>
                             ),
                           );
                         },
-                        child: const Text('GİRİŞ YAP'),
+                        child: const Text('MÜŞTERİ GİRİŞİ'),
                       ),
                       const SizedBox(height: 16),
 
@@ -225,7 +225,7 @@ class _HomePageState extends State<HomePage>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const SignupPage(),
+                              builder: (context) => const LoginPage1(),
                             ),
                           );
                         },
@@ -240,7 +240,7 @@ class _HomePageState extends State<HomePage>
                           ),
                         ),
                         child: const Text(
-                          'ÜYE OL',
+                          'USTA GİRİŞİ',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

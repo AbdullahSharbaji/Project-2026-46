@@ -136,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (_) => const LoginPage()),
-                        (route) => false,
+                            (route) => false,
                       );
                     },
                     icon: const Icon(Icons.logout),
